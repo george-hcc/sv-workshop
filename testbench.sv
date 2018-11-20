@@ -7,35 +7,33 @@ module testbench #(parameter SEED = 17)();
 
   source src
   (
-    .clk		(clk			),
-    .reset		(reset			),
-    .delay		(src_delay		),    
-    .vrBus		(vrBus.Master	)
+    .clk		  (clk          ),
+    .reset		(reset		    ),
+    .delay		(src_delay    ),    
+    .vrBus		(vrBus.Master )
   );
   
   sink snk
   (
-    .clk		(clk			),
-    .reset		(reset			),
+    .clk		  (clk          ),
+    .reset		(reset        ),
     .delay		(snk_delay		),    
-    .vrBus		(vrBus.Slave	)
+    .vrBus		(vrBus.Slave  )
   );
   
   task initiate();
     $srandom(SEED);
     clk 		  = 'b0;
-    reset 		= 'b1;
-    snk_delay = 'd3;
-    src_delay	= 'd1;
-    #1 reset	= 'b0;
+    reset 		= 'b0;
+    #1 reset	= 'b1;
   endtask
   
   always begin
     #5 clk = ~clk;
   end
 
-  always_ff @(negedge clk) begin
-    if(vrBus.valid && vrBus.ready) begin
+  always_ff @(posedge clk, negedge reset) begin
+    if((vrBus.valid && vrBus.ready) || ~reset) begin
       snk_delay <= $urandom_range(5, 0);
       src_delay <= $urandom_range(5, 0);
     end
