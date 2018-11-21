@@ -1,7 +1,7 @@
 module testbench #(parameter SEED = 17)();
   
   logic clk, reset;
-  real src_delay, snk_delay;
+  integer src_delay, snk_delay;
   
   valid_ready vrBus();
 
