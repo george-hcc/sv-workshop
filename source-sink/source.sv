@@ -60,7 +60,7 @@ module source
             next_state <= WAIT_HANDSHAKE;
         end
         WAIT_HANDSHAKE: begin
-          if(vrBus.valid && vrBus.ready) begin  // Handshake Ocorre
+          if(vrBus.ready) begin  // Handshake Ocorre
           	source_reg <= source_reg + 1;
           	next_state <= PROCESS_DELAY;
             delay_count <= 'b0;

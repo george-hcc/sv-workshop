@@ -1,8 +1,8 @@
 module FIFO
 	#(
 		parameter DATA_WIDTH 	= 8,
-    parameter ADDR_SIZE 	= 3,
-		parameter FIFO_SIZE		= 8 	// FIFO_SIZE = 2^ADDR_SIZE exceto para ADDR_SIZE = 0
+    parameter ADDR_SIZE 	= 2,
+		parameter FIFO_SIZE		= 4 	// FIFO_SIZE = 2^ADDR_SIZE exceto para ADDR_SIZE = 0
 	)(
 		input logic 				clk,
 		input logic 				reset,

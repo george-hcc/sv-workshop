@@ -43,9 +43,9 @@ module testbench #(parameter SEED = 17)();
 
   always_ff @(posedge clk, negedge reset) begin
     if((putBus.valid && putBus.ready) || ~reset)
-      src_delay <= $urandom_range(5, 0);
+      src_delay <= $urandom_range(1, 0);
     if((getBus.valid && getBus.ready) || ~reset)  
-      snk_delay <= $urandom_range(5, 0);
+      snk_delay <= 5+ $urandom_range(5, 0);
   end
    
   initial begin
