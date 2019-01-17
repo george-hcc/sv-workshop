@@ -24,7 +24,8 @@ module axi4_lite_ram
 			WAIT_ADDR 	= 5'b00010, 
 			WAIT_WDATA 	=	5'b00100,
 			SEND_WRESP	= 5'b01000,
-			SEND_RDATA	= 5'b10000
+			SEND_RDATA	= 5'b10000,
+			BAD_STATE		= 5'bxxxxx
 		}	state, next_state;
 
 	always_comb begin
@@ -32,67 +33,57 @@ module axi4_lite_ram
 	end
 
 	// Logica combinacional de variaveis de saida
-	always_comb begin	
+	always_comb begin		
+		amba_slave.b_resp		= 'b0; // Nao Importa
+		amba_slave.r_resp		= 'b0; // Nao Importa
 		unique case(state)
 			RESET: begin
 				amba_slave.aw_ready = 'b0;
 				amba_slave.w_ready	= 'b0;
 				amba_slave.b_valid	= 'b0;
-				amba_slave.b_resp		= 'b0;
 				amba_slave.ar_ready = 'b0;
 				amba_slave.r_valid	= 'b0;
 				amba_slave.r_data 	= 'b0;
-				amba_slave.r_resp		= 'b0;
 			end
 			WAIT_ADDR: begin
 				amba_slave.aw_ready = 1'b1;
 				amba_slave.w_ready	= 1'b0;
 				amba_slave.b_valid	= 1'b0;
-				amba_slave.b_resp		= amba_slave.b_resp; // Nao Importa
 				amba_slave.ar_ready = 1'b1;
 				amba_slave.r_valid	= 1'b0;
-				amba_slave.r_data 	= amba_slave.r_data; // Nao Importa
-				amba_slave.r_resp		= amba_slave.r_resp; // Nao Importa
+				amba_slave.r_data 	= 'b0; // Nao Importa
 			end 
 			WAIT_WDATA: begin
 				amba_slave.aw_ready = 1'b0;
 				amba_slave.w_ready	= 1'b1;
 				amba_slave.b_valid	= 1'b0;
-				amba_slave.b_resp		= amba_slave.b_resp; // Nao Importa
 				amba_slave.ar_ready = 1'b0;
 				amba_slave.r_valid	= 1'b0;
-				amba_slave.r_data 	= amba_slave.r_data; // Nao Importa
-				amba_slave.r_resp		= amba_slave.r_resp; // Nao Importa
+				amba_slave.r_data 	= 'b0; // Nao Importa
 			end
 			SEND_WRESP: begin
 				amba_slave.aw_ready = 1'b0;
 				amba_slave.w_ready	= 1'b0;
 				amba_slave.b_valid	= 1'b1;
-				amba_slave.b_resp		= 2'b11;						 // Sinal de Sucesso na Escrita
 				amba_slave.ar_ready = 1'b0;
 				amba_slave.r_valid	= 1'b0;
-				amba_slave.r_data 	= amba_slave.r_data; // Nao Importa
-				amba_slave.r_resp		= amba_slave.r_resp; // Nao Importa
+				amba_slave.r_data 	= 'b0; // Nao Importa
 			end
 			SEND_RDATA: begin
 				amba_slave.aw_ready = 1'b0;
 				amba_slave.w_ready	= 1'b0;
 				amba_slave.b_valid	= 1'b0;
-				amba_slave.b_resp		= amba_slave.b_resp; // Nao Importa
 				amba_slave.ar_ready = 1'b0;
 				amba_slave.r_valid	= 1'b1;
 				amba_slave.r_data 	= ram_mem[data_addr];
-				amba_slave.r_resp		= 2'b11;						 // Sinal de Sucesso na Leitura
 			end
 			default: begin
 				amba_slave.aw_ready = 'bx;
 				amba_slave.w_ready	= 'bx;
 				amba_slave.b_valid	= 'bx;
-				amba_slave.b_resp		= 'bx;
 				amba_slave.ar_ready = 'bx;
 				amba_slave.r_valid	= 'bx;
 				amba_slave.r_data 	= 'bx;
-				amba_slave.r_resp		= 'bx;
 			end
 		endcase
 	end
@@ -134,7 +125,7 @@ module axi4_lite_ram
 						next_state <= WAIT_ADDR;
 				end
 				default:
-					next_state <= state;
+					next_state <= BAD_STATE;
 			endcase
 		end
 	end

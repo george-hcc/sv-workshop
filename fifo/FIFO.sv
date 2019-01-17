@@ -7,8 +7,8 @@ module FIFO
 		input logic 				clk,
 		input logic 				reset,
 
-		valid_ready.Slave 			putBus,
-		valid_ready.Master 			getBus
+		valid_ready.Slave 	putBus,
+		valid_ready.Master 	getBus
 	);
 
 	generate

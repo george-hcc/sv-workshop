@@ -20,14 +20,16 @@ module ram_master
 		WRITE_IDLE	= 4'b0001,
 		SEND_WADDR	= 4'b0010,
 		SEND_WDATA	=	4'b0100,
-		WAIT_WRESP	= 4'b1000
+		WAIT_WRESP	= 4'b1000,
+		BAD_WSTATE	=	4'bxxxx
 	}	wr_state, next_wr_state;
 
 	// Variáveis de estados da READ FSM
 	enum logic [2:0]{
 		READ_IDLE		= 3'b001,
 		SEND_RADDR	= 3'b010,
-		WAIT_RDATA	= 3'b100
+		WAIT_RDATA	= 3'b100,
+		BAD_RSTATE	=	3'bxxx
 	}	rd_state, next_rd_state;
 
 	// Variáveis de estados do algoritmo de escrita e leitura
@@ -35,7 +37,8 @@ module ram_master
 		RESET				=	4'b0001,
 		READ_INDEX 	= 4'b0010, 
 		READ_DATA 	=	4'b0100,
-		WRITE_INDEX	= 4'b1000
+		WRITE_INDEX	= 4'b1000,
+		BAD_LSTATE	=	4'bxxxx
 	} logic_state, next_logic_state;
 
 	assign wr_enable = (next_logic_state == WRITE_INDEX);
@@ -72,6 +75,8 @@ module ram_master
 						next_wr_state = WRITE_IDLE;
 				end
 			end
+			default:
+				next_wr_state = BAD_WSTATE;
 		endcase
 	end
 
@@ -108,6 +113,13 @@ module ram_master
 				amba_master.w_data 		=	'b0;
 				amba_master.b_ready		=	1'b1;
 			end
+			default: begin
+				amba_master.aw_valid	=	1'bx;
+				amba_master.aw_addr		=	'bx;
+				amba_master.w_valid		=	1'bx;
+				amba_master.w_data 		=	'bx;
+				amba_master.b_ready		=	1'bx;
+			end
 		endcase
 	end
 
@@ -138,6 +150,8 @@ module ram_master
 						next_rd_state = READ_IDLE;
 				end
 			end
+			default:
+				next_rd_state = BAD_RSTATE;
 		endcase
 	end
 
@@ -159,6 +173,11 @@ module ram_master
 				amba_master.ar_valid	=	1'b0;
 				amba_master.ar_addr		=	'b0;
 				amba_master.r_ready		= 1'b1;
+			end
+			default: begin
+				amba_master.ar_valid	=	1'bx;
+				amba_master.ar_addr		=	'bx;
+				amba_master.r_ready		= 1'bx;
 			end
 		endcase
 	end
@@ -189,6 +208,8 @@ module ram_master
 				if(amba_master.b_ready && amba_master.b_valid)	
 					next_logic_state = READ_INDEX;
 			end
+			default:
+				next_logic_state = BAD_LSTATE;
 		endcase
 	end
 
@@ -204,6 +225,8 @@ module ram_master
 				addr = data;
 			WRITE_INDEX:
 				addr = index;
+			default:
+				addr = 'bx;
 		endcase
 	end
 
