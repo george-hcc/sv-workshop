@@ -28,6 +28,9 @@ module mem_fpga
   logic [RAM_DATA_WIDTH-1:0]  data_vector [0:RAM_N_OF_WORDS-1];
   logic [RAM_ADDR_WIDTH-1:0]  addr_r;
   logic [12:0]                counter;
+
+  // Criação de variável para substituir o delay de escrita que não é possivel de se fazer de forma sequencial
+  logic                       gambiarra;
   
   enum
   {
@@ -50,12 +53,20 @@ module mem_fpga
     endcase
   end
 
+  always_comb
+  begin
+    if(wr_i)
+      #(5ms:10ms:15ms) gambiarra = 1'b1;
+    else
+      gambiarra = 1'b0;
+  end
+
   always_ff @(posedge clk_i)
   begin
     state <= next_state;
     addr_r <= addr_i;
-    if(wr_i) 
-      #(5ms:10ms:15ms) data_vector[addr_r] <= data_i;
+    if(gambiarra) 
+      data_vector[addr_r] <= data_i;
     if(state == IDLE)
       counter <= 13'h0000;
     else
