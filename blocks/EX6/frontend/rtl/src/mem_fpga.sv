@@ -1,13 +1,14 @@
 module mem_fpga
   #(
-    RAM_DATA_WIDTH = 16,
-    RAM_ADDR_WIDTH = 10,
-    RAM_N_OF_WORDS = 256
+    parameter RAM_DATA_WIDTH = 16,
+    parameter RAM_ADDR_WIDTH = 10,
+    parameter RAM_N_OF_WORDS = 256
   )(
     clk_i,
     wr_i,
     addr_i,
     data_i,
+    busy_mem_o,
     data_o
   );
 
@@ -52,9 +53,9 @@ module mem_fpga
   always_ff @(posedge clk_i)
   begin
     state <= next_state;
-    addr_r <= addrs_i;
+    addr_r <= addr_i;
     if(wr_i) 
-      #(5ms:15ms) data_vector[addr_t] <= data_i;
+      #(5ms:10ms:15ms) data_vector[addr_r] <= data_i;
     if(state == IDLE)
       counter <= 13'h0000;
     else
@@ -69,7 +70,7 @@ module mem_fpga
       busy_mem_o = 1'b1;
   end
   
-  assign #(20us:100us) data_o = data_vector[addr_r];
+  assign #(20us:60us:100us) data_o = data_vector[addr_r];
 
 endmodule
 
