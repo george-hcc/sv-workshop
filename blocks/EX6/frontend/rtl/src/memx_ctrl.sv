@@ -5,16 +5,16 @@ module memx_ctrl
   )(
     input  logic                      clk_i,
     input  logic                      mem_rd_i,
-    input  logic                      mem_wd_i,
-    input  logic [RAM_ADDR_WIDTH-1:0] memc_addr_i,
+    input  logic                      mem_wr_i,
+    input  logic [RAM_ADDR_WIDTH-1:0] mem_addr_i,
     input  logic                      busy_mem_i,
-    output logic                      memc_busy_o,
-    output logic                      memc_wok_o
+    output logic                      mem_busy_o,
+    output logic                      mem_wok_o
   );
 
   logic invalid_addr;
 
-  assign invalid_addr = memc_addr_i >= RAM_N_OF_WORDS;
+  assign invalid_addr = mem_addr_i >= RAM_N_OF_WORDS;
 
   enum
   {
@@ -54,11 +54,11 @@ module memx_ctrl
   begin
     state <= next_state;
     if(state == WAIT_WRITE && !busy_mem_i)
-      memc_wok_o <= 1'b1;
+      mem_wok_o <= 1'b1;
     else
-      memc_wok_o <= 1'b0;
+      mem_wok_o <= 1'b0;
   end
 
-  assign memc_busy_o = (state != IDLE) && busy_mem_i;
+  assign mem_busy_o = (state != IDLE) && busy_mem_i;
 
 endmodule
