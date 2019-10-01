@@ -1,5 +1,8 @@
 module memx_proc
-  (
+  #(
+    parameter RAM_DATA_WIDTH = 16,
+    parameter RAM_ADDR_WIDTH = 10
+  )(
     // Interface de entrada e saídas externas
     input  logic                      clk_i,
     input  logic                      memc_wd_i,

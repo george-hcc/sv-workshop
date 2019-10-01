@@ -1,5 +1,8 @@
 module memx_ctrl
-  (
+  #(
+    parameter RAM_ADDR_WIDTH = 10,
+    parameter RAM_N_OF_WORDS = 256
+  )(
     input  logic                      clk_i,
     input  logic                      mem_rd_i,
     input  logic                      mem_wd_i,
