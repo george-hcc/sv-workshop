@@ -39,7 +39,7 @@ module mem_fpga
     WRITE_PROC
   }state, next_state;
 
-  initial $readmemh("endereço do folder", data_vector);
+  //initial $readmemh("endereço do folder", data_vector);
 
   always_comb
   begin
