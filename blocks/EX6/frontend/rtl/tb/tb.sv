@@ -1,9 +1,9 @@
 module tb();
 
   //Parametros
-  parameter RAM_DATA_WIDTH;
-  parameter RAM_ADDR_WIDTH;
-  parameter RAM_N_OF_WORDS;
+  parameter RAM_DATA_WIDTH = 16;
+  parameter RAM_ADDR_WIDTH = 10;
+  parameter RAM_N_OF_WORDS = 256;
   
   logic                       clk;
   //Interface TB-MEMC
@@ -27,12 +27,12 @@ module tb();
   int n_erros;
   int n_testes;
   
-  module memx
+  memx
   #(
-    .RAM_DATA_WIDTH,
-    .RAM_ADDR_WIDTH,
-    .RAM_N_OF_WORDS
-  )(
+    .RAM_DATA_WIDTH(),
+    .RAM_ADDR_WIDTH(),
+    .RAM_N_OF_WORDS()
+  )CONTROLLER(
     .clk_i              (clk),
     .mem_rd_i           (mem_rd_w),
     .mem_wr_i           (mem_wr_w),
@@ -45,30 +45,30 @@ module tb();
     .data_i             (rdata_w),
     .wr_o               (wr_w),
     .addr_o             (addr_w),
-    .data_o             (wdata_w),
+    .data_o             (wdata_w)
   );
 
-  module mem_fpga
+  mem_fpga
   #(
-    ,RAM_DATA_WIDTH,
-    ,RAM_ADDR_WIDTH,
-    ,RAM_N_OF_WORDS
-  )(
-    clk_i               (clk),
-    wr_i                (wr_w),
-    addr_i              (addr_w),
-    data_i              (wdata_w),
-    busy_mem_o          (busy_mem_w),
-    data_o              (rdata_w),
+    .RAM_DATA_WIDTH(),
+    .RAM_ADDR_WIDTH(),
+    .RAM_N_OF_WORDS()
+  )MEMORY(
+    .clk_i               (clk),
+    .wr_i                (wr_w),
+    .addr_i              (addr_w),
+    .data_i              (wdata_w),
+    .busy_mem_o          (busy_mem_w),
+    .data_o              (rdata_w)
   );
   
   initial begin
     initiate;
     mem_wr_w = 1'b1;
-    mem_rd_i = 1'b0;
+    mem_rd_w = 1'b0;
     mem_addr_w = 10'h000;
     mem_wdt_w = 16'h1010;
-    toggle_clk(10000);
+    toggle_clk(40000);
     /*
     $display("###INICIALIZANDO TESTES###");
     for(int i = 0; i < 1000; i++) begin
@@ -133,8 +133,8 @@ module tb();
   task toggle_clk(input int n);
     for(int i = 0; i < n; i++) 
     begin
-      #1 clk = !clk;
-      #1 clk = !clk;
+      #250ns clk = !clk;
+      #250ns clk = !clk;
     end
   endtask
   
