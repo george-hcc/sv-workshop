@@ -34,8 +34,8 @@ module memx
 
    memx_ctrl 
    #(
-    .RAM_ADDR_WIDTH,
-    .RAM_N_OF_WORDS
+    .RAM_ADDR_WIDTH(),
+    .RAM_N_OF_WORDS()
    )CTRL(
     .clk_i        (clk_i),
     .mem_rd_i     (mem_rd_i),
@@ -43,13 +43,13 @@ module memx
     .mem_addr_i   (mem_addr_i),
     .busy_mem_i   (busy_mem_i),
     .mem_busy_o   (mem_busy_o),
-    .mem_wok_o    (mem_wok_o),
+    .mem_wok_o    (mem_wok_o)
    );
 
    memx_proc 
    #(
-    .RAM_DATA_WIDTH,
-    .RAM_ADDR_WIDTH
+    .RAM_DATA_WIDTH(),
+    .RAM_ADDR_WIDTH()
    )PROC(
     .clk_i        (clk_i),
     .mem_wr_i     (mem_wr_i),
