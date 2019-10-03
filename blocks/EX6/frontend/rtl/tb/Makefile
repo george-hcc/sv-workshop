@@ -1,12 +1,12 @@
 run: all
 
 all:
-	irun -access +r -input shm.tcl ../src/memx.sv ../src/memx_ctrl.sv ../src/memx_proc.sv ../src/mem_model.sv tb.sv  -nowarn "NONPRT"
+	xrun -access +r -input shm.tcl ../src/memx.sv ../src/mem_model.sv tb.sv  -nowarn "NONPRT"
 
 create:
 	@echo "database -open waves -shm" >> shm.tcl
 	@echo "probe -create  tb -depth all -all -memories -shm -database waves" >> shm.tcl
-	@echo "run 18 ms -absolute" >> shm.tcl
+	@echo "run 100 ms -absolute" >> shm.tcl
 	@echo "exit" >> shm.tcl
 	
 waves: 
@@ -19,7 +19,8 @@ synthesize:
 
 clean_reports:
 	rm -r reports*
+
 clean:
-	rm -rf xcelium.d INCA_libs xrun.* *.shm *.dsn *.trn *.ucm ncvlog_*.err imc.key .simvision irun.* *.diag
+	rm -rf xcelium.d INCA_libs xrun.* *.shm shm.tcl
 	rm -r  mapped* rc* fv libscore_work script
 
