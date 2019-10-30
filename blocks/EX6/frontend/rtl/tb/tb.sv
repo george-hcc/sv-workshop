@@ -84,6 +84,12 @@ module tb();
     toggle_clk(10);
     while(mem_busy_w)
       toggle_clk(1);
+    mem_wr_w = 1'b0;
+    mem_rd_w = 1'b1;
+    mem_addr_w = 10'h000;
+    toggle_clk(10);
+    while(mem_busy_w)
+      toggle_clk(1);
     $finish;
   end
   
