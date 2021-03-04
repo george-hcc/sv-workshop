@@ -1,0 +1,6 @@
+xrun.*
+*.tcl
+xcelium.d
+.simvision
+*.diag
+waves.*
